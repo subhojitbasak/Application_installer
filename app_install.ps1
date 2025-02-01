@@ -70,7 +70,7 @@ foreach ($app in $apps) {
     
     # Add paths for specific applications
     switch ($app) {
-        "Python.Python" {
+        "Python" {
             $pythonPath = "C:\Users\$env:USERNAME\AppData\Local\Microsoft\WindowsApps\python.exe"
             if (Test-Path $pythonPath) {
                 Add-ToPath "C:\Users\$env:USERNAME\AppData\Local\Microsoft\WindowsApps"
