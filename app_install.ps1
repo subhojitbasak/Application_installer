@@ -78,10 +78,9 @@ foreach ($app in $apps) {
                 Add-ToPath "C:\Program Files\Python"
             }
         }
-        "Oracle.JavaRuntimeEnvironment" { Add-ToPath "C:\Program Files\Java\jdk-21\bin" }
-        "Oracle.JavaRuntimeEnvironment.8" { Add-ToPath "C:\Program Files\Java\jdk1.8.0_281\bin" }
-        "Oracle.JavaRuntimeEnvironment.17" { Add-ToPath "C:\Program Files\Java\jdk-17\bin" }
-        "Oracle.JavaRuntimeEnvironment.21" { Add-ToPath "C:\Program Files\Java\jdk-21\bin" }
+        "Java 8" { Add-ToPath "C:\Program Files\Java\jdk1.8.0_281\bin" }
+        "Oracle.JDK.17" { Add-ToPath "C:\Program Files\Java\jdk-17\bin" }
+        "Oracle.JDK.21" { Add-ToPath "C:\Program Files\Java\jdk-21\bin" }
         "Git.Git" { Add-ToPath "C:\Program Files\Git\bin" }
         "Docker.DockerDesktop" { Add-ToPath "C:\Program Files\Docker\Docker" }
         "Amazon.AWSCLI" { Add-ToPath "C:\Program Files\Amazon\AWSCLI\bin" }
