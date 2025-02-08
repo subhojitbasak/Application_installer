@@ -5,14 +5,14 @@ $apps = @(
     "Oracle.JDK.21",
     "Python.Pip",
     "JetBrains.IntelliJIDEA.Community",
-    "Microsoft.VisualStudioCode",
     "Docker.DockerDesktop",
     "Oracle.VirtualBox",
     "Amazon.AWSCLI",
     "Git.Git",
     "Google.Chrome",
     "Kakao.PotPlayer",
-    "Zoom.Zoom"
+    "Zoom.Zoom",
+	"Notepad++.Notepad++"
 )
 
 # Log file
@@ -77,6 +77,25 @@ if ($pythonInstalled -like "*Python*" ) {
     }
 }
 
+# Install VSCODE  dynamically
+Write-Host "Checking VisualStudioCode..." -ForegroundColor Cyan
+Log "Checking VisualStudioCode..."
+$vscodenstalled = winget list --name "Microsoft.VisualStudioCode" 2>&1
+if ($vscodenstalled -like "*VisualStudioCode*"){
+	Write-Host "VisualStudio Code is already installed. " -ForegroundColor Green
+    Log "Abort VisualStudioCode installation....."
+} else {
+    Write-Host "Microsoft.VisualStudioCode is not installed. Installing latest version..." -ForegroundColor Yellow
+    Log "Microsoft.VisualStudioCode is not installed. Installing latest version..."
+    if (winget install Microsoft.VisualStudioCode --override "/verysilent /suppressmsgboxes /mergetasks='!runcode,addcontextmenufiles,addcontextmenufolders,associatewithfiles,addtopath'") {
+            Write-Host " VisualStudioCode installed successfully!" -ForegroundColor Green
+            Log "VisualStudioCode installed successfully!"
+    } else {
+            Write-Host "VisualStudioCode installation failed!" -ForegroundColor Red
+            Log "VisualStudioCode installation failed!"
+        }
+    }
+
 foreach ($app in $apps) {
     # Check if the app is installed
     Write-Host "Checking $app..." -ForegroundColor Cyan
@@ -109,7 +128,28 @@ foreach ($app in $apps) {
         "Oracle.JavaRuntimeEnvironment" { Add-ToPath "C:\Program Files\Java\jdk1.8.0_281\bin" }
         "Oracle.JDK.17" { Add-ToPath "C:\Program Files\Java\jdk-17\bin" }
         "Oracle.JDK.21" { Add-ToPath "C:\Program Files\Java\jdk-21\bin" }
-        "Git.Git" { Add-ToPath "C:\Program Files\Git\bin" }
+        "Git.Git" { 
+		Add-ToPath "C:\Program Files\Git\bin" 
+		New-Item -Path "Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\Git Bash Here" -Force | Out-Null
+		Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\Git Bash Here" -Name "Icon" -Value "C:\Program Files\Git\git-bash.exe"
+		Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\Git Bash Here" -Name "(Default)" -Value "Open Git Bash Here"
+		New-Item -Path "Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\Git Bash Here\command" -Force | Out-Null
+		Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\Git Bash Here\command" -Name "(Default)" -Value "`"C:\Program Files\Git\git-bash.exe`" --cd `"%V`""
+		Stop-Process -Name explorer -Force; Start-Process explorer	
+		}
+		"Microsoft.VisualStudioCode" {
+		# Add VS Code to context menu
+		New-Item -Path "Registry::HKEY_CLASSES_ROOT\*\shell\VSCode" -Force | Out-Null
+		Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\*\shell\VSCode" -Name "(Default)" -Value "Open with VS Code"
+		Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\*\shell\VSCode" -Name "Icon" -Value "C:\Program Files\Microsoft VS Code\Code.exe"
+
+		New-Item -Path "Registry::HKEY_CLASSES_ROOT\*\shell\VSCode\command" -Force | Out-Null
+		Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\*\shell\VSCode\command" -Name "(Default)" -Value "`"C:\Program Files\Microsoft VS Code\Code.exe`" `"%1`""
+
+		# Restart Explorer
+		Stop-Process -Name explorer -Force; Start-Process explorer
+		}
+
         "Docker.DockerDesktop" { Add-ToPath "C:\Program Files\Docker\Docker" }
         "Amazon.AWSCLI" { Add-ToPath "C:\Program Files\Amazon\AWSCLI\bin" }
     }
